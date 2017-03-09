@@ -1,0 +1,25 @@
+
+html,body {
+    font-family:monospace
+  color:rebeccapurple
+font-weight: 600;
+    font-size: 30;
+}
+body,h2{
+    text-align: center;
+}
+body, h3{
+    background-color: beige;
+    line-height: 1.6;
+    
+}
+body, h4{
+    margin-top: 4px;
+}
+
+}
+
+}
+}
+    
+
