@@ -1,1 +1,118 @@
+            
+<!doctype html>
+<html>
+    <head>
+    
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+        
 
+<div id="map"></div>
+
+       <link rel="stylesheet" href="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/themes/css/cartodb.css" />
+  <script src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/cartodb.js"></script>
+        <style>
+        html, body {
+        height: 100%;
+        margin:0;
+        padding:0;
+        width: 100%;
+            }
+        #map {
+            height: 75%;
+            width: 75%;
+            }
+            .type-picker {
+                margin-left: auto 
+            }
+            
+</style>
+        
+    </head>
+    <style>
+    
+    </style>
+    <body>
+        <h1> Water Resources La Paz</h1>
+      <center><div id="map"></div></center>
+     
+    <select class="type-picker">
+            <option value="all">all</option>
+            <option value="Zongo">Zongo</option>
+            <option value="Wara Warani">Wara Warani</option>
+            <option value="Taypichaca">Taypichaca</option>
+            <option value="Santari">Santari</option>
+            <option value="Romerkhota">Romerkhota</option>
+            <option value="Milluni">Milluni</option>
+            <option value="Mari Marini">Mari Marini</option>
+        </select>
+             <script type="template/html" id="popup-template">
+          <div class="cartodb-popup v2">
+            <a href="#close" class="cartodb-popup-close-button close">x</a>
+            <div class="cartodb-popup-content-wrapper">
+              <div class="cartodb-popup-content">
+                {{name}} Dam name: {{capacity_million_m3}}
+              </div>
+            </div>
+            <div class="cartodb-popup-tip-container"></div>
+          </div>
+        </script>
+    <script>
+          var damssLayer;
+    $(document).ready(function () {
+        cartodb.createVis('map', 'https://thenewschool.carto.com/u/patricia278/api/v2/viz/921dd826-17c9-11e7-95bf-0e3ebc282e83/viz.json',{
+            zoom:7,
+            center_lat:-16.500,
+            center_lon:-68.150
+        })
+        .done(function (vis, layers) {
+            damssLayer= layers [1].getSubLayer (5);
+            dataLayer.infowindow.set('template', $('#popup-template').html());
+        });
+                    
+                    $('.type-picker').change(function () {
+                    var type = $(this).val();
+                    var sql;
+                       if (type === 'all') {
+                      
+                        sql = "SELECT * FROM damss"; 
+                    }
+                    else if (type === 'Zongo'){
+                        
+                        sql = "SELECT * FROM damss WHERE name = 'Zongo'";
+                    }
+                      else if (type === 'Wara Warani') {
+                      
+                          sql = "SELECT * FROM damss WHERE name = 'Wara Warani'";
+                    }
+                      else if (type === 'Taypichaca') {
+                      
+                          sql = "SELECT * FROM damss WHERE name = 'Taypichaca+'";
+                     }
+                       else if (type === 'Santari') {
+                        
+                           sql = "SELECT * FROM damss WHERE name = 'Santari'";
+                     }
+                       else if (type === 'Romerkhota') {
+                       
+                           sql = "SELECT * FROM damss WHERE name = 'Romerkhota+'";
+                    }
+                     else if (type === 'Milluni') {
+                       
+                         sql = "SELECT * FROM damss WHERE name = 'Milluni'";
+                     }
+                     else if (type === 'Mari Marini') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Mari Marini'";
+                     }
+                 damssLayer.setSQL(sql);
+                });
+            });
+    
+</script>
+        <script src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/cartodb.js"></script>
+    </body>
+</html>
+
+
+
+            
