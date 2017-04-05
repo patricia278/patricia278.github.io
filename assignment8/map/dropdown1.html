@@ -1,4 +1,3 @@
-            
 <!doctype html>
 <html>
     <head>
@@ -18,13 +17,23 @@
         width: 100%;
             }
         #map {
+       
             height: 75%;
             width: 75%;
             }
             .type-picker {
                 margin-left: auto 
             }
-            
+            h1{
+                font-family:helvetica;
+                margin-top: 2px;
+                margin-bottom: 900px
+                margin-right: 2px;
+                 position: relative;
+                left: 100px;
+                
+                
+           }
 </style>
         
     </head>
@@ -42,8 +51,27 @@
             <option value="Taypichaca">Taypichaca</option>
             <option value="Santari">Santari</option>
             <option value="Romerkhota">Romerkhota</option>
-            <option value="Milluni">Milluni</option>
+            <option value="Milluni">Milluni (water stressed)</option>
             <option value="Mari Marini">Mari Marini</option>
+              <option value="Kunkahuikhara">Kunkahuikhara</option>
+              <option value="Khota Khasa">Khota Khasa</option>
+              <option value="Khara Khota">Khara Khota</option>
+              <option value="Iquiaca">Iquiaca</option>
+              <option value="Incachaca">Incachaca (water stressed)</option>
+              <option value="Condoriri">Condoriri (water stressed)</option>
+              <option value="Chuacollo Grande">Chuacollo Grande</option>
+              <option value="Chuacollo Chico">Chuacollo Chico</option>
+              <option value="Chojlla">Chojlla</option>
+              <option value="Chica Belen">Chica Belen</option>
+              <option value="Cacapi">Cacapi</option>
+          <option value="Alkha Khota">Alkha Khota</option>
+          <option value="Ajuankhota">Ajuankhota</option>
+          <option value="Achayapu">Achayapu</option>
+          <option value="Tola Pampa">Tola Pampa</option>
+          <option value="Estrellani">Estrellani</option>
+          <option value="Vila Chururuni">Vila Chururuni</option>
+            <option value="Alto Pujrahui">Alto Pujrahui</option>
+            <option value="Pucho Belen">Pucho Belen</option>
         </select>
              <script type="template/html" id="popup-template">
           <div class="cartodb-popup v2">
@@ -66,7 +94,14 @@
         })
         .done(function (vis, layers) {
             damssLayer= layers [1].getSubLayer (5);
-            dataLayer.infowindow.set('template', $('#popup-template').html());
+              damssLayer.setInteractivity('name, capacity_million_m3');
+                        vis.addOverlay({
+                            type: 'tooltip',
+                            layer: damssLayer,
+                            template: '<div class="cartodb-tooltip-content-wrapper"><div class="cartodb-tooltip-content"><h3>Name of Dam</h3><p>{{name}}</p><h3>Dam Capacity (millions m3)</h3><p>{{capacity_million_m3}}</p></div></div>', 
+                            position: 'bottom|right',
+                            fields: [{name: 'name', capacity_million_m3: 'capacity_million_m3'}]
+                        });
         });
                     
                     $('.type-picker').change(function () {
@@ -86,7 +121,7 @@
                     }
                       else if (type === 'Taypichaca') {
                       
-                          sql = "SELECT * FROM damss WHERE name = 'Taypichaca+'";
+                          sql = "SELECT * FROM damss WHERE name = 'Taypichaca'";
                      }
                        else if (type === 'Santari') {
                         
@@ -94,7 +129,7 @@
                      }
                        else if (type === 'Romerkhota') {
                        
-                           sql = "SELECT * FROM damss WHERE name = 'Romerkhota+'";
+                           sql = "SELECT * FROM damss WHERE name = 'Romerkhota'";
                     }
                      else if (type === 'Milluni') {
                        
@@ -104,6 +139,84 @@
                         
                          sql = "SELECT * FROM damss WHERE name = 'Mari Marini'";
                      }
+                        else if (type === 'Kunkahuikhara') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Kunkahuikhara'";
+                     }
+                        else if (type === 'Khota Khasa') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Khota Khasa'";
+                     }
+                        else if (type === 'Khara Khota') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Khara Khota'";
+                     }
+                        else if (type === 'Iquiaca') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Iquiaca'";
+                     }
+                        else if (type === 'Incachaca') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Incachaca'";
+                     }
+                        else if (type === 'Condoriri') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Condoriri'";
+                     }
+                         else if (type === 'Chuacollo Grande') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Chuacollo Grande'";
+                     }
+                         else if (type === 'Chuacollo Chico') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Chuacollo Chico'";
+                     }
+                         else if (type === 'Chojlla') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Chojlla'";
+                     }
+                         else if (type === 'Chica Belen ') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Chica Belen '";
+                     }
+                        else if (type === 'Cacapi') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Cacapi '";
+                     }
+                        else if (type === 'Alkha Khota ') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Alkha Khota'";
+                     } 
+                        else if (type === 'Ajuankhota') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Ajuankhota'";
+                     }
+                        else if (type === 'Achayapu') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Achayapu'";
+                     }
+                        else if (type === 'Tola Pampa') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Tola Pampa'";
+                     }
+                        else if (type === 'Estrellani') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Estrellani'";
+                     }
+                        else if (type === 'Vila Chururuni') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Vila Chururuni'";
+                     }
+                        else if (type === 'Alto Pujrahui') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Alto Pujrahui'";
+                     }
+                              else if (type === 'Pucho Belen') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Pucho Belen'";
+                     }
+                
+                        
                  damssLayer.setSQL(sql);
                 });
             });
@@ -113,6 +226,5 @@
     </body>
 </html>
 
-
-
+            
             
