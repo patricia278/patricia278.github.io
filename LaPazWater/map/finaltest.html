@@ -1,1 +1,761 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+  
+      
+    <!--
+    Load CartoDB's code so we can pull in our CartoDB maps.
+    -->
+    <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
+    
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+      }
 
+      #map {
+        height: 100%;
+        width: 100%;
+         
+                }
+/*     map code starts here */
+  .mines-checkbox-container {
+        position: absolute;
+        top: 60px;
+        right: 55px;
+      }
+          .buffer-checkbox-container {
+        position: absolute;
+        top: 80px;
+        right: 55px;
+      }
+         .rivers-checkbox-container {
+        position: absolute;
+        top: 100px;
+        right: 55px;
+      }
+            .buttons {
+                position: absolute;
+                top:-360px;
+                right:55px
+            }
+        
+  
+    
+/*        CSS for copied code */
+        .sidepanel {
+            background-color: #3b424c;
+            position: absolute;
+            top: 0;
+       left: 0;
+            bottom: 0;
+            width: 20%;
+            height: 100%;
+            overflow: auto;
+            border-left: solid #2a2f38 1px;
+                opacity: 0.6;
+        }
+        .wrapper{
+            display: block;
+            padding: 4px 30px 0 30px; 
+        }
+        #title-text {
+            border-bottom: 10px  #ffff;
+            margin-bottom: 5px;
+            padding-bottom: 3px;
+            text-align: left;
+        }
+        #enviro-receptor {
+            background: #2a2f38;
+            color: #30353d;
+            line-height: 1px;
+            margin-left: -15px;
+            margin-right: -15px;
+            margin-top: 30px;
+            padding: 1px;
+            border-bottom: solid black 1px;
+            border-top: solid black 1px;
+        }
+        #title-text {
+            margin-left:-5px;
+            margin-top: 100px;
+            color:white;
+            font-family:Optima;
+            font-size: 16px;
+            font-weight: normal;
+             line-height: 30px;
+
+        }
+        .tab{
+            margin-top: -10px;
+            line-height: 25px;
+            color: whitesmoke;
+            background-color:  #3b424c;
+            opacity: 1.0px;
+            font-feature-settings: normal;
+            font-family: Optima;
+            font-weight:bold;
+            font-size: 14px;
+            margin-left: -30px;
+            
+            
+        }
+        #Home{
+            line-height: 30px;
+            font-size:px;
+            
+        }
+        #panel {
+            color: white;
+            line-height: 20px;
+            text-indent: 0px;
+            font-size: 12px;
+            font-family: Optima;
+            margin-left: -15px;
+            
+            
+    
+            
+        }
+ 
+        
+/*        CSS for copied code ends */
+        
+    </style>
+  </head>
+  <body>
+<!--    la paz map code begins here -->
+    <div id="map"></div>
+       <div class="mines-checkbox-container">
+      <label style="font-family:optima; font-size:12px;color:white;" for="mines">Mining Concession Areas</label>
+      <input id="mines" type="checkbox" class="mines-checkbox" />
+    </div>
+    <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+      <div class="buffer-checkbox-container">
+      <label style="font-family:optima; font-size:12px;color:white;" for="buffer">Dams at Risk, 30m from Mining Area</label>
+      <input id="buffer" type="checkbox"class="buffer-checkbox" />
+    </div>
+    <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+          <div class="rivers-checkbox-container">
+      <label style="font-family:optima; font-size:12px;color:white;" for="rivers">Rivers 30 m away from Mining Concessions</label>
+      <input id="rivers" type="checkbox" class="rivers-checkbox" />
+    </div>
+      <div id="map"></div>
+        <div class="cartodb-legend color">
+            <div style="font-family:optima" class="legend-title"> Water Resources and Mines in La Paz, Bolivia</div>
+            <ul class="legend-list">
+                <li style="font-family:optima"><div class="bullet" style="background-color: #1a58bc;"></div> Dams</li>
+                <li style="font-family:optima"><div class="bullet" style="background-color: #282728;"></div> Dams in 30 m Buffer-Mining areas <italic>(At risk of contamination) </italic> </li>
+                <li style="font-family:optima"><div class="bullet" style="background-color: #6b6d70;"></div> Mining Concessions</li>
+                <li style="font-family:optima"><div class="bullet" style="background-color: #3a95ac;"></div> Rivers in 30m Buffer-Mining areas <italic> (At risk of contamination </italic></li>
+                    <div class="buttons">
+            <button style="font-family:optima; font-size:12px;color:blue;" class="allrivers"> All Rivers</button>
+            <button style="font-family:optima; font-size:12px;color:blue;"class="reset">Reset</button>
+        </div>
+                  <select  style="font-family:Optima; font-size:12px;color:blue;" value="all" class="type-picker">
+            <option>All Dams</option>
+            <option value="Zongo">Zongo</option>
+            <option value="Wara Warani">Wara Warani</option>
+            <option value="Taypichaca">Taypichaca</option>
+            <option value="Santari">Santari</option>
+            <option value="Romerkhota">Romerkhota</option>
+            <option value="Milluni">Milluni (Water Stressed)</option>
+            <option value="Mari Marini">Mari Marini</option>
+              <option value="Kunkahuikhara">Kunkahuikhara(Dry during crisis)</option>
+              <option value="Khota Khasa">Khota Khasa</option>
+              <option value="Khara Khota">Khara Khota</option>
+              <option value="Iquiaca">Iquiaca</option>
+              <option value="Incachaca">Incachaca (Dry during crisis)</option>
+              <option value="Condoriri">Condoriri (Water Stressed)</option>
+              <option value="Chuacollo Grande">Chuacollo Grande</option>
+              <option value="Chuacollo Chico">Chuacollo Chico</option>
+              <option value="Chojlla">Chojlla</option>
+              <option value="Chica Belen">Chica Belen</option>
+              <option value="Cacapi">Cacapi</option>
+          <option value="Alkha Khota">Alkha Khota</option>
+          <option value="Ajuankhota">Ajuankhota (Dry during crisis)</option>
+          <option value="Achayapu">Achayapu</option>
+          <option value="Tola Pampa">Tola Pampa</option>
+          <option value="Estrellani">Estrellani</option>
+          <option value="Vila Chururuni">Vila Chururuni</option>
+            <option value="Alto Pujrahui">Alto Pujrahui</option>
+            <option value="Pucho Belen">Pucho Belen</option>
+            <option value="Hampaturi">Hampaturi (Dry during crisis)</option>
+        </select>
+            </ul>
+        </div>
+      
+      
+<!--      design copied code starts here -->
+
+      <!--sidebox-->
+    <div id="side-box" class="sidepanel" style="display:block;">
+        <div class="wrapper">
+        <div id="title-text">
+             <p style="font-weight:normal; font-size: 12px; font-family: Roboto; font-size:11px;">
+        
+            <h1>Water Resources  La Paz, Bolivia</h1>
+        </div>
+        
+        <!-- start tabs         -->
+    <br>
+    <ul class="tab">
+        <li><a style="color:blue;font-weight:bold;font-family:Optima;font-size:11px;" href="#" class="tablinks" onclick="openCity(event,'Home')">WATER CRISIS</a></li>
+        <li><a style="color:blue;font-weight:bold;font-family:Optima;font-size:11px;" href="#" class="tablinks" onclick="openCity(event,'Pollution')">IMPACTS OF MINING</a>
+        </li>        
+        <li><a style="color:blue;font-weight:bold;font-family:Optima;font-size:11px;" href="#" class="tablinks" onclick="openCity(event,'Risk')">STRATEGY</a>
+        </li>        
+        <li><a style="color:blue;font-weight:bold;font-family:Optima;font-size:11px;" href="#" class="tablinks" onclick="openCity(event,'Methods')">WHATS NEXT?</a>
+        </li>
+        </ul>
+        
+
+<!-- Tab #1 - Home        -->
+        <div id="Home" class="tabcontent">
+            <p style="font-weight:normal; font-size: 12px; font-family: Optima; font-size:13px; color: white;line-height:15px; margin-top: 40px;margin-left:-15px;"> This project analyzes "Bolivia's worst water crisis".  A recent water crisis that occurred in the city of La Paz where 94 neighborhoods did not have access to water for 4 months. There are many confirmed and potential causes to why the 3 main dams that supply water to La Paz and parts of El Alto reduced to ~5% of their capacity. However this map only explores the effects of mining on water resources. </p>
+            
+            <div id="flip" class="history"  style="background: #3b424c;
+    color: #020628;
+    font-size: 18px;
+    font-family: Optima;
+    font-weight: bold;
+     line-height: 20px;
+    margin-left: -10px;
+    margin-right: -15px;
+    margin-top: 30px;
+    padding: 1px;
+    border-bottom: solid white 1px; border-left: solid #ffffff 0px; border-right: solid #ffffff 0px;
+    border-top: solid black 0px;">Background</div>
+        
+        <div id="panel" class="history" style="margin 20px;">
+        <div id="newark-history">
+            <p style="text-indent: 3px;">Bolivia has always had political and economic issues with its water management structure that have prevented and still prevent  universal access to water in the country. The Structural Adjustment Programs in 1989 marked the start of water privatization in the country. These programs were part of prescriptive approaches by the IMF, WTO and the World Bank to end poverty in the developings world. The SAPs encouraged open barriers to trade and the privatization of public resources. The privatization of water resources in Bolivia was followed by the WATER WARS, in which citizens demanded the end of privatization as they were corrupt and inefficient systems. 2006 marked the start of state ownership and control of water resources and the development of a new Constitution. The new Constitution established rights to water as a human right, stressed the protection of mother earth and Indigenous Rights.Nevertheless, through the recent water crisis and its causes, we can see universal access to water and sanitation is still a far reaching goal for the Bolivian population.
+            <p style="text-indent: 3px;">
+      
+            
+            
+             </div>
+            
+            </div>
+            <div id="flip" class="newark-pollution"  style="background:#3b424c;
+    color: #020628;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: Optima;
+    line-height: 20px;
+    margin-left: -15px;
+    margin-right: -15px;
+    margin-top: 30px;
+    padding: 1px;
+    border-bottom: solid white 1px; border-left: solid #ffffff 0px; border-right: solid #2a2f38 0px;
+    border-top: solid black 0px;">Causes of Water Scarcity</div>
+        
+        <div id="panel" class="newark-pollution" style="margin 20px;">
+        <div id="n-pollution">
+            <p style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;">Experts opinion and research point to several issues that contributed to the water crisis. </p>
+            <p style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;"> On November 2016 the government publicly apologized to citizens of La Paz, claiming that the entity in charge of providing the service,<strong> EPSAS</strong>   had not informed them that dams had been in a precarious state. Main causes:   
+                <ul>
+                    <li style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;">Climate Change</li>
+                    <li style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;"> Unaccounted water demand</li>
+                    <li style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;"> Low investment in infrastructure upgrades</li>
+                    <li style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;"><strong> Extractive Industries: mining</strong> </li>
+                
+          
+            </ul>
+      
+            
+             </div>
+            
+            </div>       
+            
+        </div>
+<!--            Tab #1 End-->
+        
+<!-- Tab #2 - Pollution             -->
+        <div id="Pollution" class="tabcontent">
+            
+      
+            
+<!--        Point source pollution          -->
+
+         <div id="flip" class="one" onmouseover="mOverone(this)" onmouseout="mOutone(this)" style="background: #30353d;
+    color: #020628;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: Optima;
+    line-height: 35px;
+    margin-left: -15px;
+    margin-right: -15px;
+    margin-top: 30px;
+    padding: 1px;
+    border-bottom: solid white 1px; border-left: solid #2a2f38 0px; border-right: solid #2a2f38 0px;
+    border-top: solid black 0px;">Mining</div>
+        
+        <div id="panel" class="one" style="margin 20px;">
+        <div id="receptor-description">
+                <p style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;">Bolivia is rich in mineral resources like tin, copper, silver, gold. The Mining industry accounts for ~10% of the countries GDP but is also culturally important for the country, therefore demanding remediation or stricter environmental regulations is challenging</p>
+            <p style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;">Studies show about 63% of the country's watersheds which cover 41% of the country are contaminated by the mining industry. Moreover research in 2010 showed the Incachaca dam (dam for human consumption) had mining contamination. Further research is needed to establish how much water is extracted by both foreign and national mining corporations and also to analyze to what extent water resources for human consumption are contaminated.  </p>
+             </div>
+        <div id="data-selection">
+                <h4>Mining Concessions, bodies of water and all 27 dams. </h4>                
+              
+        
+        </div>
+            </div>
+        
+<!--        Nonpoint source               -->
+        
+        <div id="flip" class="two"  onmouseover="mOvertwo(this)" onmouseout="mOuttwo(this)" style="background: #2a2f38;
+    color: #020628;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: Optima;
+    line-height: 35px;
+    margin-left: -15px;
+    margin-right: -15px;
+    margin-top: 30px;
+    padding: 1px;
+    border-bottom: solid white 1px; border-left: solid white 0px;
+    border-top: solid black 0px;">Dams and Rivers at Risk</div>
+        <div id="panel" class="two" style="margin 20px;">
+            <p>CLICK CHECKBOXES TO OBSERVE:</p>
+            <ul>
+                    <li style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;">Rivers at risk of mining contamination</li>
+                    <li style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;"> Dams at risk of mining contamination</li>
+                    <li style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;"> Observe the condition and capacity (m3) of all dams</li>
+                    <li style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;"><strong> Observe the location of all minor and major rivers</strong> </li>
+                
+          
+            </ul>
+      
+            ------------------------------------------------------------
+        </div>
+    </div>
+<!--        ends Tab #2     -->
+
+            
+<!--        Tab #3 - Risk  -->
+        <div id="Risk" class="tabcontent"
+             style="background: #30353d;
+    color: #020628;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: Optima;
+    line-height: 35px;
+    margin-left: -15px;
+    margin-right: -15px;
+    margin-top: 30px;
+    padding: 1px;
+    border-bottom: solid white 1px; border-left: solid #2a2f38 0px; border-right: solid #2a2f38 0px;
+    border-top: solid black 0px;">STRATEGY</div>
+<h3 style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;"> SPATIAL DATA COLLECTION SOURCES:
+             <ul>
+                    <li style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;">Geobolivia.com</li>
+                    <li style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;"> DIVAGIS</li>
+                    <li style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;"> BIVICA & MMAYA</li>
+                    <li style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;"> CEDIB </li>
+    </ul>   </h3>
+                
+          <p style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;"> SPATIAL ANALYSIS STEPS:</p>
+                         <ul>
+                    <li style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;">Extract data only for La Paz</li>
+                    <li style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;"> Map individual dam coordinates</li>
+                    <li style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;"> Created a 30 meter buffer around dams</li>
+                    <li style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;"> Mapped dams and rivers that fell in the 30 meter buffer</li>
+                             
+                             <p style="text-indent: 0px; color:white; font-family:Optima;font-size:9px;">*A 30 meter buffer was created based on the study of Mining impacts on natural resources by a study analyzing vulnerability of water resources which establishes that water bodies 30 meters of a mine are at high risk of contamination.  </p>
+    </ul>  
+            
+            
+         
+         
+      
+<!--        Ends Tab #3        -->
+            
+            
+            
+<!--        Tab #4 - Methods            -->
+        <div id="Methods" class="tabcontent"  style="background: #30353d;
+    color:#020628;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: Optima;
+    line-height: 35px;
+    margin-left: -15px;
+    margin-right: -15px;
+    margin-top: 30px;
+    padding: 1px;
+    border-bottom: solid white 1px; border-left: solid #2a2f38 0px; border-right: solid #2a2f38 0px;
+                                                     text-indent:30px;
+    border-top: solid black 0px;">Whats Next?</div>
+
+           <h3></h3>
+            <p style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;"> Although further research is needed to determine to what extent mining affects the water extraction in La Paz and in all of Bolivia, studies have shown that there exist high levels of contamination in some of these sources. Therefore more studies should be done to assess the quality of water near the dams but also in the urban areas. 
+                
+            
+</p>
+
+                 
+            <p style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;">Taking into consideration the political and economic barriers solving some of these issues-specifically the mining issue-is a great challenge. Therefore communities, specifically low income should explore other methods such as:
+            </p>
+          
+            <ul>
+                
+                <li style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;">Rain Water catchment systems</li>
+                <li style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;">Decentralized water treatment plants</li>
+                <li style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;">Demanding the public release of information</li>
+            
+            </ul>
+     <p style="text-indent: 0px; color:white; font-family:Optima;font-size:12px;">Finally the government and other public entities should address  the issue of water sanitation. This is mainly because 70% of residual waters are returned to rivers untreated, which means all this water cannot be reused for agricultural or industrial purposes and is lost.  </p>
+
+ 
+        <h2 style=" font-size:9px;font-family:Optima;color:white;">Hampaturi Dam at Full Capacity</h2>
+        <img src="http://radiofides.com/es/wp-content/uploads/2016/11/h-foto-2-1024x768.jpg" alt="Hampaturi full capacity" style="width:304px;height:228px;opacity:1.0;">
+    <p style="font-size:9px;font-family:Optima;color:white">Hampaturi Dam at 5% capacity</p>    
+<img src="http://www.la-razon.com/ciudades/Hampaturi-encuentra-verifico-Razon-realizada_LRZIMA20161121_0067_13.jpg" alt="Hampaturi 5% capacity" style="width:304px;height:228px;opacity:1.0;">
+        
+      <p style="color:white;font-family:Optima;font-size:12px">For more information about the research project and full paper contact: <underline style="color:blue;font-family:Optima;font-size:12px">oviep278@newschool.edu</underline></p>
+
+            <h3 style="color:white;font-family:Optima;font-size:12px">Sources:</h3>
+            <p style="color:white;font-family:Optima;font-size:12px">Spatial Data Available: <a target="_blank" href="http://geo.gob.bo/">Here</a> 
+            </p>
+            
+            <p style="color:white;font-family:Optima;font-size:12px">Boundaries and water resources Available: <a target="_blank" href="http://www.diva-gis.org/">Here</a> 
+            </p>
+               <p style="color:white;font-family:Optima;font-size:12px"><strong>Center of Information and Documentation Bolivia</strong> <a target="_blank" href="http://www.cedib.org/">Here</a> 
+            </p>
+  
+        
+            
+        </div>
+<!--        Ends Tab #4            -->
+            
+
+<!--        ends fragment-3     -->
+
+
+ 
+<!--    ends sidebox        -->
+    
+      
+<!--      copied code ends here-->
+    <script>
+      var mining_areas_near_damsLayer;
+      $(document).ready(function () {
+        //
+        // Initialize map from CartoDB: create the map and store the data layer for later
+        //
+        cartodb.createVis('map', 'https://thenewschool.carto.com/u/patricia278/api/v2/viz/921dd826-17c9-11e7-95bf-0e3ebc282e83/viz.json',{
+            zoom:8,
+            center_lat:-16.500,
+            center_lon:-68.150
+        })
+          .done(function (vis, layers) {
+            // Turning on interaction
+                        layers[1].setInteraction(true);
+                  
+                        damssLayer = layers[1].getSubLayer(5);
+                  // Hiding all the other layers--one seems to be blocking our layer from the mouse going over it.
+                  layers[1].getSubLayer(0).hide();
+            
+                  layers[1].getSubLayer(2).hide();
+            
+               mining_areas_near_damsLayer= layers[1].getSubLayer(4);
+               damssLayer= layers[1].getSubLayer(5);
+                rios_lapaz_1Layer= layers[1].getSubLayer(3);
+               damssLayer= layers [1].getSubLayer (5);
+            
+            rios_lapazLayer= layers [1].getSubLayer (6);
+                 
+                  
+                        // Added cartodb_id here
+                        damssLayer.set({
+                          interactivity: 'cartodb_id,name,use,capacity_million_m3,state'
+                        });
+                  
+                        // Add hover popup, we should turn off the existing one since both are coming through here.
+                        vis.addOverlay({
+                            type: 'tooltip',
+                            layer: damssLayer,
+                            template: '<div class="cartodb-tooltip-content-wrapper"><div class="cartodb-tooltip-content"><h3>Name</h3><p>{{name}}</p><h3>Use</h3><p>{{use}}</p><h3>Capacity (m3)</h3><p>{{capacity_million_m3}}</p><h3>Condition</h3><p>{{state}}</p></div></div>', 
+                            position: 'bottom|right',
+                            fields: [{name: 'name', use:'use', capacity_million_m3:'capacity_million_m3', state:'state'}]
+                        });
+                    });
+            });
+         
+            
+         
+
+        //
+        // Initialize the checkbox: add an event handler to watch for clicks
+        //
+        $('.mines-checkbox').change(function () {
+          if ($('.mines-checkbox').prop('checked')) {
+            var sql = "SELECT * FROM mining_areas_near_dams";
+          }
+          else {
+            var sql = "SELECT * FROM mining_areas_near_dams WHERE fid_conces = 500";
+          }
+      mining_areas_near_damsLayer.setSQL(sql);
+        });
+  
+        
+    </script>
+       <script>
+      var damssLayer;
+      $(document).ready(function () {
+       
+        $('.buffer-checkbox').change(function () {
+          if ($('.buffer-checkbox').prop('checked')) {
+     var sql = "SELECT * FROM damss where buffer = 'true'";
+          }
+          else {
+            var sql ="SELECT * FROM damss";
+          }
+damssLayer.setSQL(sql);
+        });
+      });
+    </script>
+       <script>
+      var rios_lapaz_1Layer;
+      $(document).ready(function () {
+        $('.rivers-checkbox').change(function () {
+          if ($('.rivers-checkbox').prop('checked')) {
+            var sql = "SELECT * FROM rios_lapaz_1";
+          }
+          else {
+            var sql = "SELECT * FROM rios_lapaz_1 WHERE tipo = 500";
+          }
+          rios_lapaz_1Layer.setSQL(sql);
+        });
+      });
+        
+    </script>
+<script>
+            $(document).ready(function () {
+             
+            });
+        </script>
+          
+         <script>
+          var damssLayer;
+    $(document).ready(function () {
+
+                  $('.type-picker').change(function () {
+                    var type = $(this).val();
+                    var sql;
+                       if (type === 'all') {
+                      
+                        sql = "SELECT * FROM damss"; 
+                    }
+                    else if (type === 'Zongo'){
+                        
+                        sql = "SELECT * FROM damss WHERE name = 'Zongo'";
+                    }
+                      else if (type === 'Wara Warani') {
+                      
+                          sql = "SELECT * FROM damss WHERE name = 'Wara Warani'";
+                    }
+                      else if (type === 'Taypichaca') {
+                      
+                          sql = "SELECT * FROM damss WHERE name = 'Taypichaca'";
+                     }
+                       else if (type === 'Santari') {
+                        
+                           sql = "SELECT * FROM damss WHERE name = 'Santari'";
+                     }
+                       else if (type === 'Romerkhota') {
+                       
+                           sql = "SELECT * FROM damss WHERE name = 'Romerkhota'";
+                    }
+                     else if (type === 'Milluni') {
+                       
+                         sql = "SELECT * FROM damss WHERE name = 'Milluni'";
+                     }
+                     else if (type === 'Mari Marini') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Mari Marini'";
+                     }
+                        else if (type === 'Kunkahuikhara') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Kunkahuikhara'";
+                     }
+                        else if (type === 'Khota Khasa') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Khota Khasa'";
+                     }
+                        else if (type === 'Khara Khota') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Khara Khota'";
+                     }
+                        else if (type === 'Iquiaca') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Iquiaca'";
+                     }
+                        else if (type === 'Incachaca') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Incachaca'";
+                     }
+                        else if (type === 'Condoriri') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Condoriri'";
+                     }
+                         else if (type === 'Chuacollo Grande') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Chuacollo Grande'";
+                     }
+                         else if (type === 'Chuacollo Chico') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Chuacollo Chico'";
+                     }
+                         else if (type === 'Chojlla') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Chojlla'";
+                     }
+                         else if (type === 'Chica Belen') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Chica Belen '";
+                     }
+                        else if (type === 'Cacapi') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Cacapi '";
+                     }
+                        else if (type === 'Alkha Khota ') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Alkha Khota'";
+                     } 
+                        else if (type === 'Ajuankhota') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Ajuankhota'";
+                     }
+                        else if (type === 'Achayapu') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Achayapu'";
+                     }
+                        else if (type === 'Tola Pampa') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Tola Pampa'";
+                     }
+                        else if (type === 'Estrellani') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Estrellani'";
+                     }
+                        else if (type === 'Vila Chururuni') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Vila Chururuni'";
+                     }
+                        else if (type === 'Alto Pujrahui') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Alto Pujrahui'";
+                     }
+                              else if (type === 'Pucho Belen') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Pucho Belen'";
+                     }
+                            else if (type === 'Hampaturi') {
+                        
+                         sql = "SELECT * FROM damss WHERE name = 'Hampaturi'";
+                     }
+               
+                        
+                 damssLayer.setSQL(sql);
+                });
+            });
+    
+</script>
+       <script>
+        var rios_lapazLayer;
+    $(document).ready(function () {
+       
+        $('.allrivers').click(function () {
+ rios_lapazLayer.setSQL(" SELECT * FROM rios_lapaz WHERE tipo = 500");
+});
+        $('.reset').click(function () {
+            rios_lapazLayer.setSQL("SELECT * FROM rios_lapaz");
+        });
+    });
+</script>
+        <script src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/cartodb.js"></script>
+<!--        javascript for copied code starts here -->
+        <script type="text/javascript">
+  $(document).ready(function(){
+    $("#flip.one").click(function(){
+            $("#panel.one").slideToggle("slow");
+    });
+  });     
+    </script>
+    
+    <script type="text/javascript">
+  $(document).ready(function(){
+    $("#flip.two").click(function(){
+            $("#panel.two").slideToggle("slow");
+    });
+  });     
+    </script>
+    
+        <script type="text/javascript">
+  $(document).ready(function(){
+    $("#flip.history").click(function(){
+            $("#panel.history").slideToggle("slow");
+    });
+  });     
+    </script>
+            <script type="text/javascript">
+  $(document).ready(function(){
+    $("#flip.newark-pollution").click(function(){
+            $("#panel.newark-pollution").slideToggle("slow");
+    });
+  });     
+    </script>
+    
+<!--   HTML for move over changes-->
+    <script>
+    function mOverone(obj) {
+        obj.innerHTML = "More Information"
+    }
+    function mOutone(obj) {
+        obj.innerHTML = "Mining"
+    }
+    </script>
+    
+        <script>
+    function mOvertwo(obj) {
+        obj.innerHTML = "More Information"
+    }
+    function mOuttwo(obj) {
+        obj.innerHTML = "Dams and Rivers at Risk"
+    }
+    </script>
+    
+<!--    Script for tabs     -->
+    <script>
+    function openCity(evt, cityName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+        
+        tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tabcontent.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+        
+        document.getElementById(cityName).style.display = "block";
+    evt.currentTarget.className += " active";
+}
+    
+    </script>
+
+<!-- javascript for copied code ends here -->
+  </body>
+</html>
+       
